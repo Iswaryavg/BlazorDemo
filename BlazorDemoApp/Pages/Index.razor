@@ -1,0 +1,44 @@
+﻿@page "/"
+@inject IConfiguration _config;
+@inject Microsoft.Extensions.Options.IOptions<EmailSettingOptions> _emailSettingsOptions 
+<h1>Hello, world!</h1>
+
+<p>
+    my setting value is @mySetting
+</p>
+<p>
+    my subsetting value is @mySubSetting
+</p>
+<p>
+    my Connection string value is @myConnectionstring
+</p>
+<p>
+  Email enabled:@emailSetting.EnableEmailSystem
+</p>
+<p>
+    Email timeout:@emailSetting.EmailTimeoutInSeconds
+</p>
+<p>
+    Email servers:@foreach(string server in emailSetting.EmailServer)
+    {
+        @server @:&nbsp;
+    }
+</p>
+<br />
+Email Admin:@emailSetting.EmailAdmin.FirstName @emailSetting.EmailAdmin.LastName
+@code
+{
+    string mySetting = "";
+    string mySubSetting = "";
+    string myConnectionstring = "";
+    EmailSettingOptions emailSetting = new EmailSettingOptions();
+    protected override void OnInitialized()
+    {
+        mySetting = _config.GetValue<string>("MySetting");
+        mySubSetting = _config.GetValue<string>("MainSetting:SubSetting");
+        myConnectionstring = _config.GetConnectionString("Default");
+
+        //emailSetting = _config.GetSection("EmailSettings").Get<EmailSettingOptions>();
+        emailSetting=_emailSettingsOptions.Value;
+    }
+}
